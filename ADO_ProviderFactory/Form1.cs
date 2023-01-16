@@ -108,6 +108,21 @@ namespace ADO_ProviderFactory
             DbDataAdapter adapter = fact.CreateDataAdapter();
             adapter.SelectCommand = conn.CreateCommand();
             adapter.SelectCommand.CommandText = textBox2.Text.ToString();
+            DbTransaction transaction = null;
+            try {
+                transaction = conn.BeginTransaction();
+            conn.CreateCommand().ExecuteNonQuery();
+            conn.CreateCommand().ExecuteReader();
+            }
+            catch (Exception ex) 
+            {
+                MessageBox.Show(ex.Message);
+                transaction.Rollback();
+            }
+            finally 
+            { 
+                transaction.Commit(); 
+            }
             // выполняем запрос select из адаптера
             DataTable table = new DataTable();
             adapter.Fill(table);
